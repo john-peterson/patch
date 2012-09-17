@@ -293,7 +293,7 @@ there_is_another_patch (bool need_header, mode_t *file_type)
 	  {
 	    inname = savebuf (buf, t - buf);
 	    inname[t - buf - 1] = 0;
-	    inerrno = stat_input_file (inname, &instat);
+	    inerrno = stat_input_file (inname, &instat, *file_type);
 	    if (inerrno)
 	      {
 		perror (inname);
@@ -914,7 +914,7 @@ intuit_diff_type (bool need_header, mode_t *p_file_type)
 		}
 	      else
 		{
-		  stat_errno[i] = stat_input_file (p_name[i], &st[i]);
+		  stat_errno[i] = stat_input_file (p_name[i], &st[i], file_type);
 		  if (! stat_errno[i])
 		    {
 		      if (lookup_file_id (&st[i]) == DELETE_LATER)
@@ -1006,7 +1006,7 @@ intuit_diff_type (bool need_header, mode_t *p_file_type)
       {
 	if (inname)
 	  {
-	    inerrno = stat_input_file (inname, &instat);
+	    inerrno = stat_input_file (inname, &instat, file_type);
 	    if (inerrno || (instat.st_mode & S_IFMT) == file_type)
 	      maybe_reverse (inname, inerrno, inerrno || instat.st_size == 0);
 	  }

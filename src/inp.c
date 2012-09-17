@@ -130,9 +130,14 @@ too_many_lines (char const *filename)
 
 
 int
-stat_input_file (char const *filename, struct stat *st)
+stat_input_file (char const *filename, struct stat *st, mode_t file_type)
 {
-  return lstat (filename, st) == 0 ? 0 : errno;
+  int err;
+
+  err = lstat (filename, st) == 0 ? 0 : errno;
+  if (! err && S_ISREG (file_type) && S_ISLNK (st->st_mode) && symlinks_as_files)
+    err = stat (filename, st) == 0 ? 0 : errno;
+  return err;
 }
 
 bool
@@ -144,7 +149,7 @@ get_input_file (char const *filename, char const *outname, mode_t file_type)
     char *getbuf;
 
     if (inerrno == -1)
-      inerrno = stat_input_file (filename, &instat);
+      inerrno = stat_input_file (filename, &instat, file_type);
 
     /* Perhaps look for RCS or SCCS versions.  */
     if (S_ISREG (file_type)

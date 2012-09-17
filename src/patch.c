@@ -251,7 +251,7 @@ main (int argc, char **argv)
 	  if (! strcmp (inname, outname))
 	    {
 	      if (inerrno == -1)
-		inerrno = stat_input_file (inname, &instat);
+		inerrno = stat_input_file (inname, &instat, file_type);
 	      outstat = instat;
 	      outerrno = inerrno;
 	    }
@@ -722,6 +722,7 @@ static struct option const longopts[] =
   {"quoting-style", required_argument, NULL, CHAR_MAX + 8},
   {"reject-format", required_argument, NULL, CHAR_MAX + 9},
   {"read-only", required_argument, NULL, CHAR_MAX + 10},
+  {"symlinks-as-files", no_argument, NULL, CHAR_MAX + 11},
   {NULL, no_argument, NULL, 0}
 };
 
@@ -1012,6 +1013,9 @@ get_some_switches (void)
 		  read_only_behavior = RO_FAIL;
 		else
 		  usage (stderr, 2);
+		break;
+	    case CHAR_MAX + 11:
+		symlinks_as_files = true;
 		break;
 	    default:
 		usage (stderr, 2);
