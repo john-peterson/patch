@@ -129,6 +129,12 @@ too_many_lines (char const *filename)
 }
 
 
+int
+stat_input_file (char const *filename, struct stat *st)
+{
+  return lstat (filename, st) == 0 ? 0 : errno;
+}
+
 bool
 get_input_file (char const *filename, char const *outname, mode_t file_type)
 {
@@ -138,7 +144,7 @@ get_input_file (char const *filename, char const *outname, mode_t file_type)
     char *getbuf;
 
     if (inerrno == -1)
-      inerrno = lstat (filename, &instat) == 0 ? 0 : errno;
+      inerrno = stat_input_file (filename, &instat);
 
     /* Perhaps look for RCS or SCCS versions.  */
     if (S_ISREG (file_type)
